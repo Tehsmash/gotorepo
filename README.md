@@ -8,7 +8,7 @@ A utility for going directly to a source repo that is underneath the go get src 
 
 ## Usage
 
-`$ gotorepo <repo name>`
+`$ gotorepo <repo name or regex>`
 
 ## Example
 
