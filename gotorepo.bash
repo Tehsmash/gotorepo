@@ -15,3 +15,21 @@ gotorepo () {
 
   cd $search_result
 }
+
+function _gotorepo() {
+  local state
+  _arguments '1: :->first'
+
+  case $state in
+    first)
+      for i in $(find $(go env GOPATH)/src -maxdepth 3 -type d -exec basename {} \;); do
+        compadd -- $i
+      done
+      ;;
+  esac
+}
+
+# Install zsh commandline completion if available
+if [ -x "$(command -v compdef)" ]; then
+  compdef _gotorepo gotorepo
+fi
