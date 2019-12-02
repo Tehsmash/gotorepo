@@ -30,6 +30,6 @@ function _gotorepo() {
 }
 
 # Install zsh commandline completion if available
-if [ -x "$(command -v compdef)" ]; then
+if ! [ -x "$(command -v compdef)" ]; then
   compdef _gotorepo gotorepo
 fi
