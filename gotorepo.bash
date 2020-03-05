@@ -1,19 +1,25 @@
 #!/bin/bash
 
 gotorepo () {
-  search_result="$(find $(go env GOPATH)/src -maxdepth 3 -type d -name "$1")"
-  num=$(echo -e "$search_result" | wc -l)
+  found=0
+  searchresult=""
+  find $(go env GOPATH)/src -type d -maxdepth 6 -regex ".*${1}/.git" | while read file; do
+    if [ $found -gt 0 ]; then
+      searchresult+=" "
+    fi
+    searchresult+="$(dirname $file)"
+    let "found=found+1"
+  done
 
-  if [ $num -lt 1 ]; then
+  if [ $found -lt 1 ]; then
     echo "No matching repo found."
     return 1
-  elif [ $num -gt 1 ]; then
+  elif [ $found -gt 1 ]; then
     echo "Multiple matching repos found:"
-    echo "$search_result"
     return 2
   fi
 
-  cd $search_result
+  cd "$searchresult"
 }
 
 function _gotorepo() {
@@ -22,9 +28,7 @@ function _gotorepo() {
 
   case $state in
     first)
-      for i in $(find $(go env GOPATH)/src -maxdepth 3 -type d -exec basename {} \;); do
-        compadd -- $i
-      done
+      find $(go env GOPATH)/src -maxdepth 6 -type d -name ".git" | while read file; do compadd -- $(basename $(dirname $file)); done
       ;;
   esac
 }
